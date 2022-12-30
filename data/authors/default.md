@@ -1,6 +1,6 @@
 ---
 name: Omar Khairy
-avatar: /static/images/avatar.png
+avatar: /static/images/avatar.jpg
 occupation: Fullstack JavaScript/TypeScript
 email: omarkhairy21@gmail.com
 twitter: https://twitter.com/omarkhairy21

@@ -1,0 +1,80 @@
+---
+title: 'What i did learn in 2022'
+date: '2022-12-30'
+tags: ['personal', 'recap', 'highlights']
+draft: false
+summary: 'I am sharing what technologies i learned in 2022'
+images: ['/static/images/2022.jpg']
+---
+
+Overall 2022 was a great year for me. I learned a lot of new things and i am very happy with the progress i made. I am sharing what technologies i learned in 2022.
+
+## What i did learn in 2022
+
+### 1. Aws (Amazon Web Services):
+While i build my side project windr i got credits for AWS so i had to migrate from GCP(Google cloud) to Aws and i learned a lot about its services.
+I learned about the following services:
+- Aws Elastic Beanstalk
+- Aws Elastic Load Balancer
+- Aws Route 53
+- Aws S3 (I did use it before but it was a part of the stack)
+- Aws RDS (PostgreSQL)
+- AWS Container Registry
+
+That knowledge i gained helped me write a blog post about [How to Deploy Strapi Docker Container On AWS Elastic Beanstalk](https://strapi.io/blog/how-to-deploy-strapi-docker-container-on-aws-elastic-beanstalk).
+The key lessons:
+ - AWS Elastic Load Balancer is great but it is expensive i think i was paying 50$(as credits) per month for it.
+ - Aws has a great customer support and they are very helpful in comparison with GCP i could not reach out to the support team!.
+
+ ### 2. Pulumi(Infrastructure as Code):
+I learned about Pulumi and i used it to deploy my side project windr to AWS. I am planning to use it more in the future.
+
+ ### 3. Cloudflare Stack
+ I joined a new company this year we were using Cloudflare on a daily basis here are some of the services i learned about:
+- Cloudflare Workers
+- Cloudflare Pages
+- Cloudflare DNS
+- Cloudflare R2 
+- cloudflare KV (Key Value Store)
+- Cloudflare Queues (Message Queue)
+
+Key lessons:
+- Worker are great for serverless functions and they are very fast but the drawbacks:
+     - you can not use any npm packages that has native node.js modules as depndencies.
+     - Monitoring collecting logs form the worker it was such hassle you will need to send logs to a third party service with API call! (Cloudflare annouced the last month you can forwards logs with logpush but i did not try it yet)
+- Pages are great for static sites.
+- KV is most product i love from cloudlare it is a key value store that you can use it as a database or cache.
+
+
+### 4. Mointroing tools
+I learned about the following monitoring tools:
+- New Relic
+- Datadog
+
+Key lessons:
+    - Distrubuted tracing is a great for debugging and discover errors and failures quickly in productions but is not easy to config.
+    - I did not use Datadog much but i planing to use it more in the future.
+
+### 5. Render(Render.com)
+Like heroku with good developer experience(DX) they provide simple Infrastructure as code API with simple yaml file you can provision your infrastructure.
+I did use it deploy two docker cotainers with PostgresSQL. 
+
+Key lessons:
+- It is a great tool for deploying docker containers.
+- They do not provide good customer support.
+
+### 6. Internal Tools (n8n and tooljet)
+I introduced n8n and tooljet to my company and we are using them to build simple and complex workflows with n8n. we are using tooljet for building dashbaords.
+
+Key lessons:
+- n8n is great for building workflows: like connecting to different APIs, database and services and build complex workflows.
+- tooljet seems appealing but i did not use it much.
+
+### 7. PostgresSQL (DeepDive)
+I dig deep into PostgresSQL with a great course [SQL and PostgreSQL: The Complete Developer's Guide](https://www.udemy.com/course/sql-and-postgresql) from one of my favorite instructors of all time Stephen Grider, here are some of the topics i learned about:
+- Query Tunning
+- How pages are stored in the database
+- How indexes are stored in the database
+- Schemas and how to use them.
+
+I have not finished the course yet but i am planing to finish it in 2023.
