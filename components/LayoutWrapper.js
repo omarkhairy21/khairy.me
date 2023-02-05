@@ -12,29 +12,24 @@ const LayoutWrapper = ({ children }) => {
     <SectionContainer>
       <div className="flex h-screen flex-col justify-between">
         <header className="flex items-center justify-between py-10">
-          <div>
-            <Link href="/" aria-label={siteMetadata.headerTitle}>
-              <div className="flex items-center justify-between">
-                {/* <div className="mr-3">
-                  <Logo />
-                </div> */}
-                {typeof siteMetadata.headerTitle === 'string' ? (
-                  <div className="h-6 text-2xl font-semibold sm:block">
-                    {siteMetadata.headerTitle}
-                  </div>
-                ) : (
-                  siteMetadata.headerTitle
-                )}
-              </div>
-            </Link>
-          </div>
+          <Link href="/" aria-label={siteMetadata.headerTitle}>
+            <div className="flex items-start justify-center">
+              {typeof siteMetadata.headerTitle === 'string' ? (
+                <div className="h-10 text-2xl font-bold leading-10 text-zinc-800 dark:text-white sm:block">
+                  {siteMetadata.headerTitle}
+                </div>
+              ) : (
+                siteMetadata.headerTitle
+              )}
+            </div>
+          </Link>
           <div className="flex items-center text-base leading-5">
             <div className="hidden sm:block">
               {headerNavLinks.map((link) => (
                 <Link
                   key={link.title}
                   href={link.href}
-                  className="p-1 font-medium text-gray-900 dark:text-gray-100 sm:p-4"
+                  className="p-1 font-medium text-zinc-800 dark:text-gray-100 sm:p-4"
                 >
                   {link.title}
                 </Link>
