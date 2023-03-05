@@ -24,7 +24,7 @@ class MyDocument extends Document {
           <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
           <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
         </Head>
-        <body className="bg-stone-50 from-gray-700 via-gray-900 to-black text-black antialiased dark:bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] dark:text-white">
+        <body className="bg-blue-200 from-gray-700 via-gray-900 to-black text-black antialiased dark:bg-gray-900 dark:text-white">
           <Main />
           <NextScript />
         </body>
