@@ -1,6 +1,6 @@
 ---
-title: 'Coding Bacward: Build API Gatway with Cloudflare Workers(Rate Limiting)'
-date: '2023-02-19'
+title: 'Build API Gatway with Cloudflare Workers(Rate Limiting)'
+date: '2023-02-23'
 tags: ['BuildInPublic', 'LearnInPublic', 'TypeScript', 'Cloudflare', 'API']
 draft: false
 images: ['/static/images/wrong-way.jpg']
@@ -8,15 +8,18 @@ summary: 'In this post, I will show you how to build an API gateway with Cloudfl
 ---
 
 # Coding Backwards: Build API Gatway with Cloudflare Workers
+
 In this post, I will show you how to build an API gateway with Cloudflare Workers and TypeScript with test and type deriven development (TTDD) i can say it is a TDD with type checking.
 
 ## What is Coding Bacwards?
+
 The coding backwrads technique it huge infuncled by Amazon working backwards technique,
 it is a technique to build a product by starting with the end user and working backwards to the technology needed to support them.
 I can see the benefit of this technique, it is a good way to validate your thought around specific problem before implementing it.
 Also enforce you to ask the right question,reduce clutter and noise, and make sure you have the right answer before you start coding.
 
 ## What is Cloudflare Workers?
+
 Cloudflare Workers is a serverless platform that allows you to run JavaScript code on Cloudflare's global network. It is a great tool for building APIs, web applications, and more.
 
 ## What is API Gateway?
@@ -28,7 +31,6 @@ It then receives the responses from the backend services, applies any necessary 
 ## Why API Gateway?
 
 I do mean to choose building api gateway beacuse my knowledge about API gateway is limited or at least it is not bold enough to be a good example for this post.
-
 
 ## API Gatway feature (What i really know):
 
@@ -45,89 +47,89 @@ Rate limiting is a common feature of API gateways. It is used to limit the numbe
 So, When we need to implement rate limiting, we need to know the following information:
 
 ### From User perspective:
+
 #### Question: What is the rate limit?
+
 **Answer:** The rate limit is the number of requests a user can make in a given time period.
 For example, a rate limit of 100 requests per minute means that a user can make 100 requests in a minute.
 
 #### Question: How do we enforce the rate limit?
+
 **Answer:** We need to keep track of the number of requests a user has made and compare it to the rate limit.
 
 #### Question: How do we keep track of the number of requests a user has made?
+
 Answer: We need to store the number of requests a user has made in a database or in memory.
 
 #### Question: How do we compare the number of requests a user has made to the rate limit?
+
 **Answer:** By storing some metaData about when the user made the first request and with counter for the number of requests a user has made.
 
 #### Question: How do we store the number of requests a user has made in a database?
+
 **Answer:** We can use durable objects to store the number of requests a user has made.
 
 ### From Developer perspective:
+
 #### Question: How can devloper use the rate limit feature?
+
 **Answer:** By passing the rate limit as a parameter to the rateLimit function.
 
 #### Question: What about he wants to limit just specfic route or method?
+
 **Answer:** We can pass the rate limit as a parameter to the rateLimit function and the route as a parameter to the rateLimit function.
 
 #### Question: How can we give option to choose the storage?
-**Answer:** We can pass the storage as a parameter to the rateLimit function.
 
+**Answer:** We can pass the storage as a parameter to the rateLimit function.
 
 ## Add Test and Type Checking
 
 Add tests first that will fail and then implement the code to make the tests pass.
 
 ```ts
-
-import { APIGateway } from ".";
+import { APIGateway } from '.'
 
 const createRequest = (pathname: string) => {
-	return new Request(`https://khairy.me${pathname}`, {
-		method: "GET",
-		headers: new Headers({
-			'origin': 'https://khairy.me'
-		}),
-	});
+  return new Request(`https://khairy.me${pathname}`, {
+    method: 'GET',
+    headers: new Headers({
+      origin: 'https://khairy.me',
+    }),
+  })
 }
 
-describe("API Gateway", () => {
-	describe("Rate Limiting", () => {
-		it("should allow 10 requests in 60 seconds", async () => {
-			
-			const request = createRequest("/blog");
-			const gateway = APIGateway({ request });
-			gateway.addLimit("/blog", { limit: 10, timeInSeconds: 60 });
-	
-			// 10 requests in 60 seconds
-			for (let i = 0; i < 10; i++) {
-				const response = await gateway.handle(request);
-				expect(response.status).toBe(200);
-			}
-	
-			const response = await gateway.handle(request);
-			expect(response.status).toBe(429);
-		});
+describe('API Gateway', () => {
+  describe('Rate Limiting', () => {
+    it('should allow 10 requests in 60 seconds', async () => {
+      const request = createRequest('/blog')
+      const gateway = APIGateway({ request })
+      gateway.addLimit('/blog', { limit: 10, timeInSeconds: 60 })
 
-		it("should not allow more than 20 requests in 30 seconds", async () => {
-			const request = createRequest("/");
-			const gateway = APIGateway({ request });
-			gateway.addLimit("/", { limit: 20, timeInSeconds: 30 });
-	
-			// 20 requests in 30 seconds
-			for (let i = 0; i < 20; i++) {
-				const response = await gateway.handle(request);
-				expect(response.status).toBe(200);
-			}
-			
-			const response = await gateway.handle(request);
-			expect(response.status).toBe(429);
-		});
-	});
-});
+      // 10 requests in 60 seconds
+      for (let i = 0; i < 10; i++) {
+        const response = await gateway.handle(request)
+        expect(response.status).toBe(200)
+      }
 
+      const response = await gateway.handle(request)
+      expect(response.status).toBe(429)
+    })
+
+    it('should not allow more than 20 requests in 30 seconds', async () => {
+      const request = createRequest('/')
+      const gateway = APIGateway({ request })
+      gateway.addLimit('/', { limit: 20, timeInSeconds: 30 })
+
+      // 20 requests in 30 seconds
+      for (let i = 0; i < 20; i++) {
+        const response = await gateway.handle(request)
+        expect(response.status).toBe(200)
+      }
+
+      const response = await gateway.handle(request)
+      expect(response.status).toBe(429)
+    })
+  })
+})
 ```
-
-
-
-
-
-

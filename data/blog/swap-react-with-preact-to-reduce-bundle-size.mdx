@@ -2,13 +2,16 @@
 title: 'Swap React with Preact would reduce bundle size with 30%'
 date: '2023-02-19'
 tags: ['LearnInPublic', 'Preact', 'React']
-draft: false
+draft: true
 images: ['/static/images/wrong-way.jpg']
 summary: 'Learning form open source project how to reduce bundle size by swapping React with Preact'
 ---
 
-
 # Learning open source swap React with Preact to reduce bundle size
 
+Preact is react like library however it is much more lightweight. It is 3kb meanwhile React is 44kb. In small projects it is not a big deal but in big projects it is.
+I am going to share a technique i did learn form open source blog template[https://github.com/timlrx/tailwind-nextjs-starter-blog].
 
-React size 1.88 MB (1,981,514 bytes) 
+## Benchmark Total bundle size in React
+
+I am going to use [https://bundlephobia.com/] to benchmark the bundle size. I am

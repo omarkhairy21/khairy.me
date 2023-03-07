@@ -1,0 +1,41 @@
+---
+title: 'Coding Backwards'
+date: '2023-02-19'
+tags: ['BuildInPublic', 'LearnInPublic']
+draft: false
+images: ['/static/images/wrong-way.jpg']
+summary: 'Coding backwards is a tecnique i use to reduce vagnueness or clutter around a new project or feature.'
+---
+
+# Coding Backwards
+
+I did really love the idead of working backwards, that framework it is the amazon way to build new products i got it from the book [Working backwards](https://www.goodreads.com/en/book/show/53138083) by Colin Bryar and Bill Carr.
+For me i found it really useful to reduce the vagnueness of a new project or feature that i am working on, it helps me to focus on the most important things first and to avoid going into the wrong direction.
+
+As Bezos said:
+
+> The Working Backwards process is a huge amount of work. But, it saves you even more work later.
+> The Working Backwards process is not designed to be easy, it’s designed to save huge amounts of work on the backend,
+> and to make sure that we’re actually building the right thing.”
+
+# Working Backwards in actions
+
+A few weeks ago i was working on a new feature the fearure was we need to let the user know what is going on in the backgound.
+we did not want to show a loading spinner or a progress bar because the processing time is not predictable.
+we did not want to show a message that says "processing" because it is not clear what is being processed.
+
+So we decided to introduce a real time updates to users with websocket. Most of our products depends on Cloudflare services and we use Cloudflare workers to handle the requests and the websocket connection.
+
+We decided to use the Cloudflare durable objects to store the state processing with other metadata about the curret processing step.
+
+But the problem was that we did not use durable objects before it is realtively new database into the Cloudflare ecosystem and when it comes database alot of question comes to mind like: in context concurrency, scaling, etc.
+
+# Let us start coding backwards
+
+## What is the goal of the feature?
+
+The goal of the feature is to let the user know what is going on in the backgound. We want to show the user a real time updates about the progress of the processing.
+
+## What is the technical solution?
+
+Using Cloudflare durable objects.
