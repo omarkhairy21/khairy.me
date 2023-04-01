@@ -9,8 +9,8 @@ summary: 'Coding backwards is a tecnique i use to reduce vagnueness or clutter a
 
 # Coding Backwards
 
-I did really love the idead of working backwards, that framework it is the amazon way to build new products i got it from the book [Working backwards](https://www.goodreads.com/en/book/show/53138083) by Colin Bryar and Bill Carr.
-For me i found it really useful to reduce the vagnueness of a new project or feature that i am working on, it helps me to focus on the most important things first and to avoid going into the wrong direction.
+I do really love the working backward concept, that framework it is the amazon way to build new products I got it from the book [Working backward](https://www.goodreads.com/en/book/show/53138083) by Colin Bryar and Bill Carr.
+For me I found it really useful to reduce the vagueness of a new project or feature that I am working on, it helps me to focus on the most important things first and to avoid going in the wrong direction.
 
 As Bezos said:
 
@@ -18,24 +18,159 @@ As Bezos said:
 > The Working Backwards process is not designed to be easy, it’s designed to save huge amounts of work on the backend,
 > and to make sure that we’re actually building the right thing.”
 
-# Working Backwards in actions
+# Working Backward in actions
 
-A few weeks ago i was working on a new feature the fearure was we need to let the user know what is going on in the backgound.
+A few weeks ago I was working on a new feature. the feature was we need to let the user know what is going on in the background.
 we did not want to show a loading spinner or a progress bar because the processing time is not predictable.
-we did not want to show a message that says "processing" because it is not clear what is being processed.
 
-So we decided to introduce a real time updates to users with websocket. Most of our products depends on Cloudflare services and we use Cloudflare workers to handle the requests and the websocket connection.
+So we decided to introduce real-time updates to the users with WebSocket. Most of our products depend on Cloudflare services and we use Cloudflare workers to handle the requests and the WebSocket connection.
 
-We decided to use the Cloudflare durable objects to store the state processing with other metadata about the curret processing step.
+We decided to use the Cloudflare durable objects to store the state processing with other metadata about the current processing step.
 
-But the problem was that we did not use durable objects before it is realtively new database into the Cloudflare ecosystem and when it comes database alot of question comes to mind like: in context concurrency, scaling, etc.
+But the problem was that we did not use durable objects before it is a relatively new database in the Cloudflare ecosystem and when it comes to databases a lot of question comes to mind: in context concurrency, scaling, isolation levels, etc.
 
-# Let us start coding backwards
+## Coding Backwards in actions: What is the goal of the feature?
 
-## What is the goal of the feature?
+The goal of the feature is to let the user know what is going on in the background. We want to show the user real-time updates about the progress of the processing.
 
-The goal of the feature is to let the user know what is going on in the backgound. We want to show the user a real time updates about the progress of the processing.
+### What is the technical solution?
 
-## What is the technical solution?
+With Cloudflare durable and WebSockets.
 
-Using Cloudflare durable objects.
+### General Technical Q&A
+
+**Question:** Does Durable-Objects have a limit on the number of WebSockets that can be opened? \***\*Answer:\*\*** No, there is no limit on the number of WebSockets that can be opened.
+
+**Question:** Does durable objects support concurrent writes or isolation?
+**Answer:** Yes, durable objects support concurrent writes it has a single-threaded execution model also it provides transactional API
+
+```JavaScript
+const fileStatus = await DURABLE_OBJECTS.get("fileStatus");
+await fileStatus.transaction(async (txn) => {
+    await txn.put("file1", "processing");
+    await txn.put("file3", "finished");
+    await txn.put("file2", "failed");
+});
+```
+
+**Question:** Does Durable-Objects have a limitation for key-value?
+**Answer:** Yes, Keys are limited to a max size of 2048 bytes, and values are limited to 128 KiB (131072 bytes).
+
+**Question:** How can we store files processing status?
+**Answer:** We can store files processing status in a key-value store. the key it would be the file name and the value it would be the status of the file processing.
+
+**Question:** How can we add a new status for an file?
+**Answer:** We can add a new status for an file by using the transactional API.
+
+**Question:** How can we get all statuses of an file?
+**Answer:** We can get the status of an file by using the transactional API. it would add latency to the request. But it provides isolation and consistency.
+
+**Question:** Can we control caching for Durable Objects?
+**Answer:** Yes, we can control caching it provides memory cache for the same key, also we can disable it by setting `noCache` to true[https://developers.cloudflare.com/workers/learning/using-durable-objects#accessing-persistent-storage-from-a-durable-object]
+
+**Question:** How can we get the status of all filess?
+**Answer:** we can get all files status's by using list() method.
+
+## In Depth Technical Q&A
+
+**Question:** How can Node.js server update the status of processing an file?
+**Answer:** Internally, in the Node.js Server, We can use an event emitter to emit an event then in the event listener we can update the status of an file by HTTP request.
+Also, the event emitter, makes the code cleaner and achieves the separation of concerns between the event emitter and the event listener.
+
+```JavaScript
+const eventEmitter = new EventEmitter();
+
+// in the event listener
+eventEmitter.on("fileStatus", (fileName, status) => {
+  // update the status of an file
+});
+
+// do some work like downloading an file
+// emit an event
+eventEmitter.emit("files downloaded", fileName, status);
+
+// do some work like process an file
+// emit an event
+eventEmitter.emit("files processed", fileName, status);
+```
+
+**Question:** Event emitter is synchronous and it would block the execution of the code, how can we solve this problem?
+**Answer:** We can use emittery[https://github.com/sindresorhus/emittery] to solve this problem because it is asynchronous.
+
+**Question:** How can durable objects listen to events?
+**Answer:** Durable objects provide a way to handle HTTP requests directly from the worker script.
+
+For example, we can use the following code to handle HTTP requests directly from the worker script.
+
+```JavaScript
+export class Counter {
+  constructor(state, env) {
+    this.state = state;
+  }
+
+ // Handle HTTP requests from clients.
+  async fetch(request) {
+    let url = new URL(request.url);
+    let value = (await this.state.storage.get("value")) || 0;
+
+    switch (url.pathname) {
+      case "/increment":
+        ++value;
+        break;
+      case "/decrement":
+        --value;
+        break;
+      case "/":
+        // Just serve the current value.
+        break;
+      default:
+        return new Response("Not found", { status: 404 });
+    }
+
+    await this.state.storage.put("value", value);
+    return new Response(value);
+  }
+}
+
+```
+
+**Question:** How can we handle WebSocket requests from clients?
+
+**Answer:** We can use the following code to handle WebSocket requests from clients.
+
+```JavaScript
+
+export class Counter {
+  constructor(state, env) {
+    this.state = state;
+  }
+
+  // Handle WebSocket connections from clients.
+  async webSocketUpgrade(request) {
+    let socket = await request.accept();
+    let value = (await this.state.storage.get("value")) || 0;
+
+    socket.send(value);
+
+    for await (let {data} of socket) {
+      if (data === "increment") {
+        ++value;
+      } else if (data === "decrement") {
+        --value;
+      } else {
+        socket.close(1008, "Invalid message");
+        return;
+      }
+
+      await this.state.storage.put("value", value);
+      socket.send(value);
+    }
+  }
+}
+
+```
+
+## Wrappping up
+
+A few months ago, I was working another feature. we decided to go with cloudlfre key-value store but after weeks of development we facing a problem with kev-value store which is it was caching the data in edge nodes and we can not control it so we were reading the stale data.
+So using working backwards we can avoid these kind of problems and we can make the right decision from the beginning.
