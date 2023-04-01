@@ -27,6 +27,18 @@ class MyDocument extends Document {
         <body className="bg-blue-100 from-gray-700 via-gray-900 to-black text-black antialiased dark:bg-slate-900 dark:text-white">
           <Main />
           <NextScript />
+          {/* clarity */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+              (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+              })(window, document, "clarity", "script", "ghj0vwm918");
+            `,
+            }}
+          />
         </body>
       </Html>
     )
