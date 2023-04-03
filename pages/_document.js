@@ -28,7 +28,7 @@ class MyDocument extends Document {
           <Main />
           <NextScript />
           {/* clarity */}
-          <script
+          {/* <script
             dangerouslySetInnerHTML={{
               __html: `
               (function(c,l,a,r,i,t,y){
@@ -38,7 +38,7 @@ class MyDocument extends Document {
               })(window, document, "clarity", "script", "ghj0vwm918");
             `,
             }}
-          />
+          /> */}
         </body>
       </Html>
     )

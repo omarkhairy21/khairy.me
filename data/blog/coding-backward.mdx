@@ -1,5 +1,5 @@
 ---
-title: 'Coding Backwards'
+title: 'Coding Backward'
 date: '2023-02-19'
 tags: ['BuildInPublic', 'LearnInPublic']
 draft: false
@@ -21,6 +21,7 @@ As Bezos said:
 # Working Backward in actions
 
 A few weeks ago I was working on a new feature. the feature was we need to let the user know what is going on in the background.
+Basically, the project was uploading and mainpulating large pdf files. The user uploads a file and the file is processed in the background.
 we did not want to show a loading spinner or a progress bar because the processing time is not predictable.
 
 So we decided to introduce real-time updates to the users with WebSocket. Most of our products depend on Cloudflare services and we use Cloudflare workers to handle the requests and the WebSocket connection.
@@ -39,7 +40,8 @@ With Cloudflare durable and WebSockets.
 
 ### General Technical Q&A
 
-**Question:** Does Durable-Objects have a limit on the number of WebSockets that can be opened? \***\*Answer:\*\*** No, there is no limit on the number of WebSockets that can be opened.
+**Question:** Does Durable-Objects have a limit on the number of WebSockets that can be opened?
+**Answer:** No, there is no limit on the number of WebSockets that can be opened.
 
 **Question:** Does durable objects support concurrent writes or isolation?
 **Answer:** Yes, durable objects support concurrent writes it has a single-threaded execution model also it provides transactional API
