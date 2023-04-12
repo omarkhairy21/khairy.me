@@ -68,7 +68,7 @@ await fileStatus.transaction(async (txn) => {
 **Answer:** We can get the status of an file by using the transactional API. it would add latency to the request. But it provides isolation and consistency.
 
 **Question:** Can we control caching for Durable Objects?
-**Answer:** Yes, we can control caching it provides memory cache for the same key, also we can disable it by setting `noCache` to true[https://developers.cloudflare.com/workers/learning/using-durable-objects#accessing-persistent-storage-from-a-durable-object]
+**Answer:** Yes, we can control caching it provides memory cache for the same key, also we can disable it by setting `noCache` to [true](https://developers.cloudflare.com/workers/learning/using-durable-objects#accessing-persistent-storage-from-a-durable-object)
 
 **Question:** How can we get the status of all filess?
 **Answer:** we can get all files status's by using list() method.
@@ -97,7 +97,7 @@ eventEmitter.emit("files processed", fileName, status);
 ```
 
 **Question:** Event emitter is synchronous and it would block the execution of the code, how can we solve this problem?
-**Answer:** We can use emittery[https://github.com/sindresorhus/emittery] to solve this problem because it is asynchronous.
+**Answer:** We can use [emittery](https://github.com/sindresorhus/emittery) to solve this problem because it is asynchronous.
 
 **Question:** How can durable objects listen to events?
 **Answer:** Durable objects provide a way to handle HTTP requests directly from the worker script.
@@ -172,7 +172,7 @@ export class Counter {
 
 ```
 
-## Wrappping up
+## Wrapping up
 
 A few months ago, I was working another feature. we decided to go with cloudlfre key-value store but after weeks of development we facing a problem with kev-value store which is it was caching the data in edge nodes and we can not control it so we were reading the stale data.
 So using working backwards we can avoid these kind of problems and we can make the right decision from the beginning.

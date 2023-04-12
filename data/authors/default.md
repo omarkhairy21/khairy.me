@@ -16,6 +16,6 @@ I deployed many apps in different infrastructures like AWS, Google Cloud (GCP), 
 
 Ocassionally I write technical articles on my blog. Also, at strapi blog my recent article is [How to Deploy Strapi Docker Container On AWS Elastic Beanstalk](https://strapi.io/blog/how-to-deploy-strapi-docker-container-on-aws-elastic-beanstalk).
 
-I am a big fan of open-source and I contribute cloudflare ecosystem like in projects like miniflare, superflare, cloudfare-docs, also maintianing an npm package called [cron-toolkit-ts](https://www.npmjs.com/package/cron-toolkit-ts) it is type safe Type safe human readable cron expressions.
+I am a big fan of open-source and I contribute cloudflare ecosystem in projects like miniflare, superflare, cloudfare-docs, also maintianing an npm package called [cron-toolkit-ts](https://www.npmjs.com/package/cron-toolkit-ts) it is type safe Type safe human readable cron expressions.
 
 I built windr.co as side project/side hustle for a few months, it is site builder for anyone who wants to build a fast static website without any coding knowledge. It is built with Next.js, Strapi, and AWS. But I am not working on it anymore.
