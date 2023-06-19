@@ -3,7 +3,7 @@ name: Omar Khairy
 avatar: /static/images/avatar.jpg
 occupation: Fullstack JavaScript/TypeScript
 email: omarkhairy21@gmail.com
-twitter: https://twitter.com/omarkhairy21
+twitter: https://twitter.com/omark4y
 linkedin: https://www.linkedin.com/in/omarkhairy21
 github: https://github.com/omarkhairy21
 ---
