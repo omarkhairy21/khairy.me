@@ -12,7 +12,7 @@ const siteMetadata = {
   socialBanner: '/static/images/twitter-card.png',
   email: 'omarkhairy21@gmail.com ',
   github: 'https://github.com/omarkhairy21',
-  twitter: 'https://twitter.com/omarkhairy21',
+  twitter: 'https://twitter.com/omark4y',
   facebook: 'https://facebook.com',
   linkedin: 'https://www.linkedin.com/in/omarkhairy21',
   locale: 'en-US',
