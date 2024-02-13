@@ -7,25 +7,25 @@ images: ['/static/images/mono-bold.jpeg']
 summary: 'A gudie to setup monorepo with typescript, pnpm and truborepo'
 ---
 
-## Introduction
+# Introduction
 
 The past few weeks i was swtich some backend project to use typescript and the frontend during that time was
 alredy typescript based and it contains types and interfaces the most of them represent the backend models.
 So we switched to typescript on the backend and we started to share the types and interfaces between the backend and the frontend.
 
-# The two problems
+## The two problems
 
 when setup or share files between folders sepecially with typescript you will face two problems:
 
 1. Add the right package.json setup to each folder(package) to be able to build and run each folder separately.
 2. Setup the right tsconfig.json to automatically make ts to watch the changes and build the files.
 
-# Fix the first problem (Adding the right package.json setup to each folder) with workspaces
+## Fix the first problem (Adding the right package.json setup to each folder) with workspaces
 
 The first problem can be solved by using the workspaces feature in the package.json file.
 The workspaces feature allows you to share dependencies between the packages and it will be installed in the root node_modules folder.
 
-### yarn workspaces vs pnpm workspaces
+## yarn workspaces vs pnpm workspaces
 
 On the project we already use yarn as a package manager so i went with yarn workspaces.
 The main difference between yarn and pnpm is that pnpm uses a single node_modules folder and hard links to the packages that are shared between the packages.
@@ -79,8 +79,7 @@ project
 
 **server/package.json**
 
-````json
-{
+```json
 {
   "name": "server",
   "version": "1.0.0",
@@ -100,17 +99,17 @@ project
     "typescript": "^5.2.2"
   }
 }
+```
 
 **packages/shared-types/package.json**
+
 ```json
 {
   "name": "shared-types",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsc"
   },
@@ -118,7 +117,7 @@ project
     "typescript": "^5.2.2"
   }
 }
-````
+```
 
 on shared-types/package.json i added the types field to point to the dist/index.d.ts file
 so when i import the shared-types package in the app or server it will automatically import the types and interfaces.
@@ -144,7 +143,9 @@ cd server && pnpm add shared-types
 cd app && pnpm add shared-types
 ```
 
-# Fix the second problem (Setup the right tsconfig.json to automatically make ts to watch the changes and build the files)
+## Fix the second problem (Setup the right tsconfig.json)
+
+To automatically make ts to watch the changes and build the files.
 
 ### the composite option
 
