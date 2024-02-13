@@ -1,0 +1,263 @@
+---
+title: 'Setup monorepo with pnpm, typescript and turborepo'
+date: '2024-02-13'
+tags: ['typescript', 'monorepo', 'pnpm']
+draft: false
+images: ['/static/images/mono-bold.jpeg']
+summary: 'A gudie to setup monorepo with typescript, pnpm and truborepo'
+---
+
+## Introduction
+
+The past few weeks i was swtich some backend project to use typescript and the frontend during that time was
+alredy typescript based and it contains types and interfaces the most of them represent the backend models.
+So we switched to typescript on the backend and we started to share the types and interfaces between the backend and the frontend.
+
+# The two problems
+
+when setup or share files between folders sepecially with typescript you will face two problems:
+
+1. Add the right package.json setup to each folder(package) to be able to build and run each folder separately.
+2. Setup the right tsconfig.json to automatically make ts to watch the changes and build the files.
+
+# Fix the first problem (Adding the right package.json setup to each folder) with workspaces
+
+The first problem can be solved by using the workspaces feature in the package.json file.
+The workspaces feature allows you to share dependencies between the packages and it will be installed in the root node_modules folder.
+
+### yarn workspaces vs pnpm workspaces
+
+On the project we already use yarn as a package manager so i went with yarn workspaces.
+The main difference between yarn and pnpm is that pnpm uses a single node_modules folder and hard links to the packages that are shared between the packages.
+So in that way pnpm is faster than yarn and npm because it doesn't need to install the same package multiple times.
+Form storage wise sepecially on large projects pnpm is the best choice.
+
+From my experience i found that pnpm is faster than yarn workspaces.
+
+here is the project structure:
+
+```bash
+
+project
+├── app
+│   ├── src
+│   ├── package.json
+│   ├── tsconfig.json
+├── server
+│   ├── src
+│   ├── package.json
+│   ├── tsconfig.json
+├── packages
+│   ├── shared-types
+    │   ├── src
+    │   ├── package.json
+    │   ├── tsconfig.json
+├── package.json
+```
+
+**app/package.json**
+
+```json
+{
+  "name": "app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    // some dev dependencies
+  }
+}
+```
+
+**server/package.json**
+
+````json
+{
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.17",
+    "nodemon": "^3.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.2"
+  }
+}
+
+**packages/shared-types/package.json**
+```json
+{
+  "name": "shared-types",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
+````
+
+on shared-types/package.json i added the types field to point to the dist/index.d.ts file
+so when i import the shared-types package in the app or server it will automatically import the types and interfaces.
+
+## Adding pnpm workspaces(add pnpm-workspace.yaml file to the root folder)
+
+```yaml
+packages:
+  - app
+  - server
+  - packages/*
+```
+
+run `pnpm install` to install the packages and the dependencies.
+
+### Add shared-types to the app and server as a dependency
+
+```bash
+cd server && pnpm add shared-types
+```
+
+```bash
+cd app && pnpm add shared-types
+```
+
+# Fix the second problem (Setup the right tsconfig.json to automatically make ts to watch the changes and build the files)
+
+### the composite option
+
+on `package/shared-types/tsconfig.json` i added the composite option to true.
+
+```json
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "declaration": true,
+    "composite": true
+  }
+}
+```
+
+The composite option is used to enable the package to be used with package references(we will use it later to reference the shared-types package in the app and server tsconfig.json file).
+
+Add the references field to the app and server tsconfig.json file
+on the app and server tsconfig.json file i added the references field to point to the shared-types package.
+
+**app/tsconfig.json**
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true
+    // some other options
+  },
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../packages/shared-types"
+    }
+  ]
+}
+```
+
+**server/tsconfig.json**
+
+```json
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "composite": true
+  },
+  "references": [
+    {
+      "path": "../packages/shared-types"
+    }
+  ]
+}
+```
+
+## Trying imort the shared-types package in the app and server
+
+```typescript
+import express from 'express'
+
+import { Product } from 'shared-types'
+
+const app = express()
+const port = 3000
+
+const products: Product[] = [
+  { id: '1', name: 'Product 1', price: 100 },
+  { id: '2', name: 'Product 2', price: 200 },
+  { id: '3', name: 'Product 3', price: 300 },
+]
+```
+
+## The final folder structure
+
+```bash
+project
+├── app
+│   ├── src
+│   ├── package.json
+│   ├── tsconfig.json
+|   ├── pnpm-lock.yaml
+├── server
+│   ├── src
+│   ├── package.json
+│   ├── tsconfig.json
+|   ├── pnpm-lock.yaml
+├── packages
+│   ├── shared-types
+    │   ├── src
+    │   ├── package.json
+    │   ├── tsconfig.json
+    |   ├── pnpm-lock.yaml
+├── package.json
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
+```
+
+## Why do they use turborepo on large open source projects?
+
+Turborepo is a tool that makes it easy to manage monorepos with pnpm and typescript.
+On large open source porject like cal.com[https://github.com/calcom/cal.com] they use it for fast building or running developing tasks like testing or linting.
+Turborepo depend havily on caching so it would reduce signficantly the time to build or run the tasks as well as CI/CD pipelines time and cost.
+
+I am still exploring turborepo i may write a post about it in the future, but for simple projects i think pnpm workspaces is enough.
+
+The Full code is available on my repo[https://github.com/omarkhairy21/mono-bold].
