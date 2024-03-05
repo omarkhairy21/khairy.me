@@ -1,0 +1,89 @@
+---
+title: 'Takeway: Create XOR Type in Typescript 🚧'
+date: '2024-03-3'
+tags: ['typescript']
+draft: false
+summary: "Let's create a XOR type in Typescript and why it is useful"
+---
+
+## The Problem
+
+Last week i encountered a type porblem where i had existing type, let say x it as the following type
+
+```typescript
+type example = {
+  x: string
+  y: string
+}
+```
+
+I wanted to add z to the type but i wanted to make sure that only one of the y or z is present at a time.
+But not both at the same time.
+
+## The Solution
+
+Simple that is a XOR problem. I can create a XOR type in typescript like this
+
+```typescript
+type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never }
+
+type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U
+```
+
+## let's break it down
+
+- `Without<T, U>` : This is a utility type that will return the properties of T that are not present in U.
+- `T | U extends object` : This is a conditional type that checks if T or U is an object
+- `(Without<T, U> & U) | (Without<U, T> & T)` : This is the actual XOR type. It checks if T is present and U is not present and vice versa.
+- `T | U` : This is the base case. If T or U is not an object then it will just return T or U.
+
+## Example
+
+```typescript
+type example = {
+  x: string
+} & XOR<{ y: string }, { z: string }>
+
+const a: example = {
+  x: 'hello',
+  y: 'world',
+} // it works
+
+const b: example = {
+  x: 'hello',
+  z: 'world',
+} // it works
+
+const c: example = {
+  x: 'hello',
+  y: 'world',
+  z: 'world',
+} // it does not work
+```
+
+## But there is a problem
+
+when you hover over the type in your IDE you will see a lint error like this
+
+<img src="/static/images/xor-lint-error.png" alt="XOR Lint Error" width="200" height="200" />
+
+The type is very hard to read and understand. I was playing around to make it look pretty i found type package called [ts-xor](https://www.npmjs.com/package/ts-xor) which does the same thing but it looks pretty.
+
+Here is result of using ts-xor
+
+```typescript
+import type { XOR } from 'ts-xor'
+
+type example = {
+  x: string
+} & XOR<{ y: string }, { z: string }>
+```
+
+here how it looks in the IDE:
+
+<img
+  src="/static/images/pretty-xor-lint.png"
+  alt="Pretty XOR Lint Error"
+  width="200"
+  height="200"
+/>
