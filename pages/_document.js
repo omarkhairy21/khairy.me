@@ -38,7 +38,8 @@ class MyDocument extends Document {
               })(window, document, "clarity", "script", "ghj0vwm918");
             `,
             }}
-          />
+            async
+          ></script>
         </body>
       </Html>
     )
